@@ -1,0 +1,19 @@
+Akka.Surgewave
+Copyright 2024-2026 Küstenlogik
+
+This product includes software developed by Küstenlogik (https://kuestenlogik.com).
+
+This product depends on software developed by third parties. The following
+NuGet packages are linked at runtime; their full license texts ship with each
+package and remain in effect for the respective binaries:
+
+  - Akka.NET (Akka, Akka.Streams, Akka.Persistence, Akka.Persistence.Query,
+    Akka.Hosting) — Apache License 2.0
+    https://github.com/akkadotnet/akka.net
+
+  - Kuestenlogik.Surgewave.Client + Kuestenlogik.Surgewave.Client.SchemaRegistry.*
+    (Apache License 2.0)
+    https://github.com/Kuestenlogik/Surgewave
+
+  - Microsoft.Extensions.* (MIT License)
+    https://github.com/dotnet/runtime
