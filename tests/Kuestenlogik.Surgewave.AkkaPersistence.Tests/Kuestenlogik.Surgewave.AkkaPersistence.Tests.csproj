@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Akka.Persistence.Surgewave\Akka.Persistence.Surgewave.csproj" />
+    <ProjectReference Include="..\..\src\Kuestenlogik.Surgewave.AkkaPersistence\Kuestenlogik.Surgewave.AkkaPersistence.csproj" />
     <PackageReference Include="Kuestenlogik.Surgewave.Runtime" />
   </ItemGroup>
 
