@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Akka.Streams connector for Surgewave — Sources, Sinks, and Flows for reactive Surgewave topic integration.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Streams" />
+    <PackageReference Include="Akka.Hosting" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry.Protobuf" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

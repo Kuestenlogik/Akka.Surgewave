@@ -1,0 +1,64 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);NU1510;NU1902;CS1572;CS1573;CS1574;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts\</ArtifactsPath>
+    <BaseIntermediateOutputPath>$(ArtifactsPath)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <BaseOutputPath>$(ArtifactsPath)bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
+    <PackageOutputPath>$(ArtifactsPath)packages\</PackageOutputPath>
+    <PublishDir>$(ArtifactsPath)publish\$(MSBuildProjectName)\$(Configuration)\</PublishDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <Authors>Kuestenlogik</Authors>
+    <Company>Kuestenlogik</Company>
+    <Copyright>Copyright (c) 2026 Küstenlogik</Copyright>
+    <PackageTags>akka;surgewave;kafka;message-broker;event-streaming</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Kuestenlogik/Akka.Surgewave</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Kuestenlogik/Akka.Surgewave</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <!--
+    Versioning is shared across the two packages
+    (Kuestenlogik.Surgewave.AkkaStreams + Kuestenlogik.Surgewave.AkkaPersistence)
+    so a single tag produces both NuGets at the same version. Bump here for a
+    coordinated release.
+  -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <Version>0.2.0</Version>
+    <AssemblyVersion>0.2.0</AssemblyVersion>
+    <FileVersion>0.2.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <!--
+    icon.png + README.md aus dem Repo-Root in jedes NuGet einbetten.
+    Quelle des icon.png ist scripts/icon.svg + scripts/generate-icon.js
+    (sharp-based render).
+  -->
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" Link="icon.png" Visible="false" Condition="Exists('$(MSBuildThisFileDirectory)icon.png')" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Link="README.md" Visible="false" Condition="Exists('$(MSBuildThisFileDirectory)README.md')" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Akka.NET Persistence plugin backed by Surgewave — Journal, Snapshot Store, and Persistence Query with Schema Registry support.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Persistence" />
+    <PackageReference Include="Akka.Persistence.Query" />
+    <PackageReference Include="Akka.Streams" />
+    <PackageReference Include="Akka.Hosting" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry.Protobuf" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>
