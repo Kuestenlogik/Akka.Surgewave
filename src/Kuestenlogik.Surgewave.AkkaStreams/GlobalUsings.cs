@@ -5,3 +5,7 @@
 // per-file using lists stay short and Akka-idiomatic.
 global using Akka;
 global using Akka.Streams;
+// `Dsl.Flow` / `Dsl.Sink` referenced the Akka.Streams.Dsl namespace via the
+// old outer namespace `Akka.Streams`. With the new namespace this alias
+// restores the `Dsl.`-qualified access.
+global using Dsl = Akka.Streams.Dsl;

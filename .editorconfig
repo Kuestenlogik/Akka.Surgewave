@@ -33,7 +33,11 @@ dotnet_diagnostic.CA1056.severity = none
 dotnet_diagnostic.CA1308.severity = none
 dotnet_diagnostic.CA1720.severity = none
 dotnet_diagnostic.CA1724.severity = none
+dotnet_diagnostic.CA1805.severity = none
+dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CA1873.severity = none
+dotnet_diagnostic.CA2000.severity = suggestion
 
 [tests/**.cs]
 dotnet_diagnostic.CA1707.severity = none
