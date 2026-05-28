@@ -56,7 +56,11 @@ jobs:
         run: dotnet build Akka.Surgewave.slnx -c Release --no-restore -p:Version=$VERSION
 
       - name: Test
-        run: dotnet test Akka.Surgewave.slnx -c Release --no-build -v normal
+        # Akka.Persistence-TCK-Specs (Journal/SnapshotStore/ReadJournal) und
+        # EndToEnd-Tests brauchen einen laufenden Surgewave-Broker — ohne
+        # Testcontainers-Setup timeouten sie. Filter analog release.yml; ein
+        # separater Integration-Job mit echtem Broker folgt (siehe MAINTAINERS).
+        run: dotnet test Akka.Surgewave.slnx -c Release --no-build -v normal --filter "FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd"
 
       - name: Pack NuGet
         run: dotnet pack Akka.Surgewave.slnx -c Release --no-build -o artifacts/packages -p:Version=$VERSION
