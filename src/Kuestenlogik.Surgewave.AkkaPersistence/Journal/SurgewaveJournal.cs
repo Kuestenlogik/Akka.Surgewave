@@ -3,7 +3,6 @@ namespace Kuestenlogik.Surgewave.AkkaPersistence.Journal;
 using System.Collections.Immutable;
 using Akka.Actor;
 using Akka.Configuration;
-using Akka.Persistence;
 using Akka.Persistence.Journal;
 using Kuestenlogik.Surgewave.AkkaPersistence.Serialization;
 using Kuestenlogik.Surgewave.Client;

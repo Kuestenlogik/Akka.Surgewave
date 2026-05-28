@@ -1,6 +1,5 @@
 namespace Kuestenlogik.Surgewave.AkkaStreams.Producer;
 
-using Akka.Streams;
 using Akka.Streams.Stage;
 using Kuestenlogik.Surgewave.AkkaStreams.Messages;
 using Kuestenlogik.Surgewave.AkkaStreams.Settings;

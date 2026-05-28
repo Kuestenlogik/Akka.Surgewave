@@ -3,7 +3,6 @@ namespace Kuestenlogik.Surgewave.AkkaPersistence.Serialization;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
-using Akka.Persistence;
 using Kuestenlogik.Surgewave.AkkaPersistence.Journal;
 using Google.Protobuf;
 using Kuestenlogik.Surgewave.Client.Native.Operations.Schema;
