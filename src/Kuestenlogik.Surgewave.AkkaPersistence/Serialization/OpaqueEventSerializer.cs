@@ -2,7 +2,6 @@ namespace Kuestenlogik.Surgewave.AkkaPersistence.Serialization;
 
 using System.Text;
 using Akka.Actor;
-using Akka.Persistence;
 using Akka.Persistence.Journal;
 using Akka.Serialization;
 

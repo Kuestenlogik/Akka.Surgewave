@@ -1,6 +1,5 @@
 namespace Kuestenlogik.Surgewave.AkkaPersistence.Query;
 
-using Akka;
 using Akka.Actor;
 using Akka.Persistence.Query;
 using Kuestenlogik.Surgewave.AkkaPersistence.Serialization;

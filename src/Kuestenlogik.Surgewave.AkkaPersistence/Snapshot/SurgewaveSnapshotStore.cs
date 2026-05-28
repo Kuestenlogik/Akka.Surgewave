@@ -2,7 +2,6 @@ namespace Kuestenlogik.Surgewave.AkkaPersistence.Snapshot;
 
 using Akka.Actor;
 using Akka.Configuration;
-using Akka.Persistence;
 using Akka.Persistence.Snapshot;
 using Kuestenlogik.Surgewave.AkkaPersistence.Journal;
 using Kuestenlogik.Surgewave.AkkaPersistence.Serialization;

@@ -1,6 +1,5 @@
 namespace Kuestenlogik.Surgewave.AkkaPersistence.Serialization;
 
-using Akka.Persistence;
 
 /// <summary>
 /// Abstraction over the two serialization modes.

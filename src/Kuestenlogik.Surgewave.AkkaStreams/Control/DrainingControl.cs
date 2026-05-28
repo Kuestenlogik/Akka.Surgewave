@@ -1,6 +1,5 @@
 namespace Kuestenlogik.Surgewave.AkkaStreams.Control;
 
-using Akka.Streams;
 
 /// <summary>
 /// Materialized value that supports orderly shutdown with drain.
