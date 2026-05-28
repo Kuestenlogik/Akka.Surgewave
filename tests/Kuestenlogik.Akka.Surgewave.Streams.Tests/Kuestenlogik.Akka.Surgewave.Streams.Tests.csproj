@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Kuestenlogik.Surgewave.AkkaStreams\Kuestenlogik.Surgewave.AkkaStreams.csproj" />
+    <ProjectReference Include="..\..\src\Kuestenlogik.Akka.Surgewave.Streams\Kuestenlogik.Akka.Surgewave.Streams.csproj" />
     <PackageReference Include="Kuestenlogik.Surgewave.Runtime" />
   </ItemGroup>
 
