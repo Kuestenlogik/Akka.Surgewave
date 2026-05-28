@@ -66,7 +66,7 @@ jobs:
       # nuget.org: nur GA-Tags (kein `-rc`), nur wenn Secret konfiguriert.
       # Apache-2.0 → public-pushbar. NUGET_API_KEY braucht den 'Push new
       # packages and package versions'-Scope mit Glob
-      # `Kuestenlogik.Surgewave.Akka*` (deckt AkkaStreams + AkkaPersistence).
+      # `Kuestenlogik.Akka.Surgewave.*` (deckt AkkaStreams + AkkaPersistence).
       - name: Publish NuGet to nuget.org
         if: ${{ !contains(github.ref, '-rc') && env.NUGET_API_KEY != '' }}
         run: |

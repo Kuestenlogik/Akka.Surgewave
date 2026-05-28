@@ -40,14 +40,14 @@
 
   <!--
     Versioning is shared across the two packages
-    (Kuestenlogik.Surgewave.AkkaStreams + Kuestenlogik.Surgewave.AkkaPersistence)
+    (Kuestenlogik.Akka.Surgewave.Streams + Kuestenlogik.Akka.Surgewave.Persistence)
     so a single tag produces both NuGets at the same version. Bump here for a
     coordinated release.
   -->
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
-    <Version>0.2.0</Version>
-    <AssemblyVersion>0.2.0</AssemblyVersion>
-    <FileVersion>0.2.0</FileVersion>
+    <Version>0.3.0</Version>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <FileVersion>0.3.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

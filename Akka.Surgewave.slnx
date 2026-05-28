@@ -1,10 +1,10 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Kuestenlogik.Surgewave.AkkaStreams/Kuestenlogik.Surgewave.AkkaStreams.csproj" />
-    <Project Path="src/Kuestenlogik.Surgewave.AkkaPersistence/Kuestenlogik.Surgewave.AkkaPersistence.csproj" />
+    <Project Path="src/Kuestenlogik.Akka.Surgewave.Streams/Kuestenlogik.Akka.Surgewave.Streams.csproj" />
+    <Project Path="src/Kuestenlogik.Akka.Surgewave.Persistence/Kuestenlogik.Akka.Surgewave.Persistence.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Kuestenlogik.Surgewave.AkkaStreams.Tests/Kuestenlogik.Surgewave.AkkaStreams.Tests.csproj" />
-    <Project Path="tests/Kuestenlogik.Surgewave.AkkaPersistence.Tests/Kuestenlogik.Surgewave.AkkaPersistence.Tests.csproj" />
+    <Project Path="tests/Kuestenlogik.Akka.Surgewave.Streams.Tests/Kuestenlogik.Akka.Surgewave.Streams.Tests.csproj" />
+    <Project Path="tests/Kuestenlogik.Akka.Surgewave.Persistence.Tests/Kuestenlogik.Akka.Surgewave.Persistence.Tests.csproj" />
   </Folder>
 </Solution>

@@ -33,8 +33,8 @@ git push --tags
 - `.github/workflows/release.yml` triggers on `v*` tag push
 - Build + Test + Pack run against the tag version (slnx covers both projects)
 - Two `*.nupkg` artifacts:
-  - `Kuestenlogik.Surgewave.AkkaStreams.<v>.nupkg`
-  - `Kuestenlogik.Surgewave.AkkaPersistence.<v>.nupkg`
+  - `Kuestenlogik.Akka.Surgewave.Streams.<v>.nupkg`
+  - `Kuestenlogik.Akka.Surgewave.Persistence.<v>.nupkg`
 - Both push to GitHub Packages (stable + pre-release)
 - Both push to nuget.org (stable only, gated on `NUGET_API_KEY` secret)
 - GitHub Release with auto-generated notes + both nupkgs attached
@@ -48,7 +48,7 @@ git push --tags
 
 | Secret | Scope | Used for |
 |---|---|---|
-| `NUGET_API_KEY` | Org-level | nuget.org publish (gate on `env.X != ''`). Glob should include `Kuestenlogik.Surgewave.Akka*` to cover both packages. |
+| `NUGET_API_KEY` | Org-level | nuget.org publish (gate on `env.X != ''`). Glob should include `Kuestenlogik.Akka.Surgewave.*` to cover both packages. |
 | `KUESTENLOGIK_PACKAGES_TOKEN` | Org-level | Restore from GitHub Packages during build (Surgewave-Client dependency) |
 
 If `NUGET_API_KEY` is missing, the workflow skips nuget.org silently and GitHub Packages still receives the build.
@@ -57,16 +57,18 @@ If `NUGET_API_KEY` is missing, the workflow skips nuget.org silently and GitHub 
 
 Aligned across all artifacts for both packages:
 
-| Property | AkkaStreams | AkkaPersistence |
+| Property | Streams | Persistence |
 |---|---|---|
 | **Repo** | `Akka.Surgewave` (shared) | `Akka.Surgewave` (shared) |
-| **csproj-Folder** | `src/Kuestenlogik.Surgewave.AkkaStreams/` | `src/Kuestenlogik.Surgewave.AkkaPersistence/` |
-| **csproj name** | `Kuestenlogik.Surgewave.AkkaStreams.csproj` | `Kuestenlogik.Surgewave.AkkaPersistence.csproj` |
-| **Assembly name** | `Kuestenlogik.Surgewave.AkkaStreams` | `Kuestenlogik.Surgewave.AkkaPersistence` |
-| **C# Namespace** | `Kuestenlogik.Surgewave.AkkaStreams` | `Kuestenlogik.Surgewave.AkkaPersistence` |
-| **NuGet PackageId** | `Kuestenlogik.Surgewave.AkkaStreams` | `Kuestenlogik.Surgewave.AkkaPersistence` |
+| **csproj-Folder** | `src/Kuestenlogik.Akka.Surgewave.Streams/` | `src/Kuestenlogik.Akka.Surgewave.Persistence/` |
+| **csproj name** | `Kuestenlogik.Akka.Surgewave.Streams.csproj` | `Kuestenlogik.Akka.Surgewave.Persistence.csproj` |
+| **Assembly name** | `Kuestenlogik.Akka.Surgewave.Streams` | `Kuestenlogik.Akka.Surgewave.Persistence` |
+| **C# Namespace** | `Kuestenlogik.Akka.Surgewave.Streams` | `Kuestenlogik.Akka.Surgewave.Persistence` |
+| **NuGet PackageId** | `Kuestenlogik.Akka.Surgewave.Streams` | `Kuestenlogik.Akka.Surgewave.Persistence` |
 
-`AkkaStreams` / `AkkaPersistence` are deliberately single-token (no `Akka.Streams` / `Akka.Persistence` sub-namespace), so the C# compiler does not confuse `using Akka.Streams.Dsl;` (the external Akka.NET package) with our own namespace tree. The `Akka.*` prefix on nuget.org is verified-reserved by the Akka.NET team (owner `Akka`); a direct push under `Akka.Streams.Surgewave` / `Akka.Persistence.Surgewave` returns `409 Conflict`.
+The `.Surgewave.` segment between `Akka` and `Streams`/`Persistence` is deliberate: the namespace never contains the substring `Akka.Streams` or `Akka.Persistence`, so the C# compiler does not confuse `using Akka.Streams.Dsl;` (the external Akka.NET package) with our own namespace tree. The `Akka.*` prefix on nuget.org is verified-reserved by the Akka.NET team (owner `Akka`); a direct push under `Akka.Streams.Surgewave` / `Akka.Persistence.Surgewave` returns `409 Conflict`.
+
+A short-lived v0.2.0 shipped under the interim ids `Kuestenlogik.Surgewave.AkkaStreams` / `.AkkaPersistence`; v0.3.0 onwards uses `Kuestenlogik.Akka.Surgewave.{Streams,Persistence}` and the v0.2.0 ids are unlisted.
 
 ## Predecessor repos
 

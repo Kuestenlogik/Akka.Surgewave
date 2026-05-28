@@ -6,19 +6,19 @@ Two NuGet packages ship from this repository:
 
 | Package | What it does | Analogous to |
 |---|---|---|
-| [`Kuestenlogik.Surgewave.AkkaStreams`](https://www.nuget.org/packages/Kuestenlogik.Surgewave.AkkaStreams) | Sources, Sinks and Flows for reactive Surgewave topic integration | [Akka.Streams.Kafka](https://github.com/akkadotnet/Akka.Streams.Kafka) (Alpakka) |
-| [`Kuestenlogik.Surgewave.AkkaPersistence`](https://www.nuget.org/packages/Kuestenlogik.Surgewave.AkkaPersistence) | Journal, Snapshot Store and Persistence Query backed by Surgewave topics, with Schema Registry support | [Akka.Persistence.SqlServer](https://github.com/akkadotnet/Akka.Persistence.Sql) (SqlServer backend) |
+| [`Kuestenlogik.Akka.Surgewave.Streams`](https://www.nuget.org/packages/Kuestenlogik.Akka.Surgewave.Streams) | Sources, Sinks and Flows for reactive Surgewave topic integration | [Akka.Streams.Kafka](https://github.com/akkadotnet/Akka.Streams.Kafka) (Alpakka) |
+| [`Kuestenlogik.Akka.Surgewave.Persistence`](https://www.nuget.org/packages/Kuestenlogik.Akka.Surgewave.Persistence) | Journal, Snapshot Store and Persistence Query backed by Surgewave topics, with Schema Registry support | [Akka.Persistence.SqlServer](https://github.com/akkadotnet/Akka.Persistence.Sql) (SqlServer backend) |
 
-> **Naming.** The `Akka.*` prefix on nuget.org is verified-reserved by the Akka.NET team (owner `Akka`). Third-party plugins either get donated to that account or ship under their own brand. Surgewave takes the second route — the `Kuestenlogik.Surgewave.Akka{Streams,Persistence}` ids and namespaces sit under the Surgewave brand. Repo and packages stay aligned (`AkkaStreams`/`AkkaPersistence` as single tokens) so the C# compiler doesn't confuse `using Akka.Streams.Dsl;` with our own namespace tree.
+> **Naming.** The `Akka.*` prefix on nuget.org is verified-reserved by the Akka.NET team (owner `Akka`). Third-party plugins either get donated to that account or ship under their own brand. Surgewave takes the second route — the `Kuestenlogik.Akka.Surgewave.{Streams,Persistence}` ids and namespaces sit under the Kuestenlogik brand. The `.Surgewave.` segment between `Akka` and `Streams`/`Persistence` is deliberate: it means our namespace never contains the substring `Akka.Streams` or `Akka.Persistence`, so the C# compiler can't confuse `using Akka.Streams.Dsl;` (the external Akka.NET package) with our own namespace tree.
 
-## Kuestenlogik.Surgewave.AkkaStreams
+## Kuestenlogik.Akka.Surgewave.Streams
 
 ```bash
-dotnet add package Kuestenlogik.Surgewave.AkkaStreams
+dotnet add package Kuestenlogik.Akka.Surgewave.Streams
 ```
 
 ```csharp
-using Kuestenlogik.Surgewave.AkkaStreams;
+using Kuestenlogik.Akka.Surgewave.Streams;
 ```
 
 ### Features
@@ -46,14 +46,14 @@ var control = SurgewaveConsumer
     .Run(materializer);
 ```
 
-## Kuestenlogik.Surgewave.AkkaPersistence
+## Kuestenlogik.Akka.Surgewave.Persistence
 
 ```bash
-dotnet add package Kuestenlogik.Surgewave.AkkaPersistence
+dotnet add package Kuestenlogik.Akka.Surgewave.Persistence
 ```
 
 ```csharp
-using Kuestenlogik.Surgewave.AkkaPersistence;
+using Kuestenlogik.Akka.Surgewave.Persistence;
 ```
 
 ### Features
@@ -85,7 +85,7 @@ builder.Services.AddAkka("my-system", (akkaBuilder, sp) =>
 
 ## History
 
-This repository consolidates the previously separate `Akka.Streams.Surgewave` and `Akka.Persistence.Surgewave` repositories (each at v0.1.1 on nuget.org under `Kuestenlogik.Akka.Streams.Surgewave` / `Kuestenlogik.Akka.Persistence.Surgewave`). v0.2.0 ships from this combined repo with the new ids above; the old repos are archived with a pointer to this one.
+This repository consolidates the previously separate `Akka.Streams.Surgewave` and `Akka.Persistence.Surgewave` repositories (each at v0.1.1 on nuget.org under `Kuestenlogik.Akka.Streams.Surgewave` / `Kuestenlogik.Akka.Persistence.Surgewave`). v0.3.0 ships from this combined repo with the ids above; the old repos are archived with a pointer to this one. (A short-lived v0.2.0 used the interim ids `Kuestenlogik.Surgewave.AkkaStreams` / `.AkkaPersistence`; those are unlisted in favour of the `Kuestenlogik.Akka.Surgewave.*` ids.)
 
 ## License
 
