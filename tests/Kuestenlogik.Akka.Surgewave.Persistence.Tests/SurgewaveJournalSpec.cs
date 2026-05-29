@@ -1,15 +1,17 @@
 namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 
 using global::Akka.Persistence.TCK.Journal;
+using Xunit;
 
 /// <summary>
-/// Runs the full Akka.NET Journal TCK against Surgewave.
-/// Requires a running Surgewave broker at localhost:9092.
+/// Runs the full Akka.NET Journal TCK against a real Surgewave broker,
+/// started in-process by <see cref="SurgewaveBrokerFixture"/>.
 /// </summary>
+[Collection(SurgewaveBrokerCollection.Name)]
 public class SurgewaveJournalSpec : JournalSpec
 {
-    public SurgewaveJournalSpec()
-        : base(SurgewaveJournalSpecConfig.Create(), nameof(SurgewaveJournalSpec))
+    public SurgewaveJournalSpec(SurgewaveBrokerFixture broker)
+        : base(SurgewaveJournalSpecConfig.Create(broker.BootstrapServers), nameof(SurgewaveJournalSpec))
     {
         Initialize();
     }

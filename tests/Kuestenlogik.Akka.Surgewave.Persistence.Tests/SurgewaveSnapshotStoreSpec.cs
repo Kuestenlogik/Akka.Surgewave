@@ -1,15 +1,17 @@
 namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 
 using global::Akka.Persistence.TCK.Snapshot;
+using Xunit;
 
 /// <summary>
-/// Runs the full Akka.NET SnapshotStore TCK against Surgewave.
-/// Requires a running Surgewave broker at localhost:9092.
+/// Runs the full Akka.NET SnapshotStore TCK against a real Surgewave broker,
+/// started in-process by <see cref="SurgewaveBrokerFixture"/>.
 /// </summary>
+[Collection(SurgewaveBrokerCollection.Name)]
 public class SurgewaveSnapshotStoreSpec : SnapshotStoreSpec
 {
-    public SurgewaveSnapshotStoreSpec()
-        : base(SurgewaveSnapshotSpecConfig.Create(), nameof(SurgewaveSnapshotStoreSpec))
+    public SurgewaveSnapshotStoreSpec(SurgewaveBrokerFixture broker)
+        : base(SurgewaveSnapshotSpecConfig.Create(broker.BootstrapServers), nameof(SurgewaveSnapshotStoreSpec))
     {
         Initialize();
     }
