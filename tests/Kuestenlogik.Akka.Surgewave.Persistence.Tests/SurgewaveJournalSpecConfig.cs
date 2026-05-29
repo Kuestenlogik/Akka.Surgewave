@@ -39,7 +39,10 @@ public static class SurgewaveJournalSpecConfig
                         bootstrap-servers = "{{bootstrapServers}}"
                         protocol = "auto"
                         snapshot-topic = "akka-snapshots-test"
-                        snapshot-topic-partitions = 4
+                        # Single partition keeps the TCK's end-of-topic
+                        # detection cheap — every persistenceId is one Actor,
+                        # so there's nothing to parallelise across.
+                        snapshot-topic-partitions = 1
                         snapshot-topic-replication-factor = 1
                         serialization-mode = "opaque"
                     }
