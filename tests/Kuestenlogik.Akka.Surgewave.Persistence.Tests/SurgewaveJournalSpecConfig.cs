@@ -7,9 +7,9 @@ using global::Akka.Configuration;
 /// </summary>
 public static class SurgewaveJournalSpecConfig
 {
-    public static Config Create()
+    public static Config Create(string bootstrapServers = "localhost:9092")
     {
-        return ConfigurationFactory.ParseString("""
+        return ConfigurationFactory.ParseString($$"""
             akka.persistence {
                 publish-plugin-commands = on
                 journal {
@@ -17,7 +17,7 @@ public static class SurgewaveJournalSpecConfig
                     surgewave {
                         class = "Kuestenlogik.Akka.Surgewave.Persistence.Journal.SurgewaveJournal, Kuestenlogik.Akka.Surgewave.Persistence"
                         plugin-dispatcher = "akka.actor.default-dispatcher"
-                        bootstrap-servers = "localhost:9092"
+                        bootstrap-servers = "{{bootstrapServers}}"
                         protocol = "auto"
                         journal-topic = "akka-journal-test"
                         index-topic = "akka-journal-index-test"
@@ -36,7 +36,7 @@ public static class SurgewaveJournalSpecConfig
                     surgewave {
                         class = "Kuestenlogik.Akka.Surgewave.Persistence.Snapshot.SurgewaveSnapshotStore, Kuestenlogik.Akka.Surgewave.Persistence"
                         plugin-dispatcher = "akka.actor.default-dispatcher"
-                        bootstrap-servers = "localhost:9092"
+                        bootstrap-servers = "{{bootstrapServers}}"
                         protocol = "auto"
                         snapshot-topic = "akka-snapshots-test"
                         snapshot-topic-partitions = 4
@@ -52,8 +52,8 @@ public static class SurgewaveJournalSpecConfig
 
 public static class SurgewaveSnapshotSpecConfig
 {
-    public static Config Create()
+    public static Config Create(string bootstrapServers = "localhost:9092")
     {
-        return SurgewaveJournalSpecConfig.Create();
+        return SurgewaveJournalSpecConfig.Create(bootstrapServers);
     }
 }

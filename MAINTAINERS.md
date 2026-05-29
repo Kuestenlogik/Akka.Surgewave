@@ -10,7 +10,7 @@ Internal documentation for `Akka.Surgewave` maintainers. The repository ships tw
 dotnet test Akka.Surgewave.slnx -c Release -v normal
 ```
 
-Akka-TCK-Specs (Journal/SnapshotStore/ReadJournal) and EndToEnd tests need a running Surgewave broker. The release workflow filters them via `FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd`; a dedicated integration job with Testcontainers exercises them on `main`.
+The Akka-TCK specs (Journal-/SnapshotStore-TCK) and EndToEnd tests run against a real Surgewave broker started **in-process** by `SurgewaveBrokerFixture` (an `ICollectionFixture` wrapping `SurgewaveRuntime` — in-memory storage, auto-assigned port, auto-created topics). No external broker / Docker is needed. `main`-CI (`ci.yml`) runs the full suite including these; the release workflow (`release.yml`) still filters them via `FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd` to keep the tag path lean (the specs already gated the commit on `main`).
 
 ### 2. Bump versions
 
