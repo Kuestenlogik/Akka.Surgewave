@@ -10,7 +10,20 @@ Internal documentation for `Akka.Surgewave` maintainers. The repository ships tw
 dotnet test Akka.Surgewave.slnx -c Release -v normal
 ```
 
-The Akka-TCK specs (Journal-/SnapshotStore-TCK) and EndToEnd tests run against a real Surgewave broker started **in-process** by `SurgewaveBrokerFixture` (an `ICollectionFixture` wrapping `SurgewaveRuntime` — in-memory storage, auto-assigned port, auto-created topics). No external broker / Docker is needed. `main`-CI (`ci.yml`) runs the full suite including these; the release workflow (`release.yml`) still filters them via `FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd` to keep the tag path lean (the specs already gated the commit on `main`).
+The Akka-TCK specs (Journal-/SnapshotStore-TCK) and EndToEnd tests run against a real Surgewave broker started **in-process** by `SurgewaveBrokerFixture` (an `ICollectionFixture` wrapping `SurgewaveRuntime` — in-memory storage, auto-assigned port, auto-created topics). No external broker / Docker is needed: `dotnet test ... --filter "FullyQualifiedName~Spec"` runs them locally.
+
+Both `ci.yml` and `release.yml` currently keep the filter `FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd` while the SnapshotStore-TCK still fails — see *Open issues* below. The JournalSpec-TCK is green against the in-process broker.
+
+## Open issues
+
+- **SnapshotStore delete-tombstone serialization.** The SnapshotStore-TCK
+  (`SurgewaveSnapshotStoreSpec`) surfaces `System.ArgumentNullException: Value
+  cannot serialize to null` on `DeleteAsync` — the store produces a `null`
+  payload as the compaction tombstone, but `SurgewaveProducer` / the codec
+  reject null values. Needs a tombstone path that the producer accepts (e.g.
+  explicit delete-marker header + empty body, or a producer null-value
+  affordance). Plus a `LoadSnapshotResult` timeout on the non-matching-criteria
+  case. Until fixed, the SnapshotStore-TCK + EndToEnd stay filtered in CI.
 
 ### 2. Bump versions
 
