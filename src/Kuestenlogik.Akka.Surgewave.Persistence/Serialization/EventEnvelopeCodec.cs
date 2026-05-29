@@ -20,6 +20,19 @@ public static class EventEnvelopeCodec
     public const string SnapshotSeqNrHeader = "akka-snapshot-seq-nr";
     public const string SnapshotTimestampHeader = "akka-snapshot-timestamp";
 
+    // Tombstone markers for SnapshotStore.DeleteAsync. The record body is
+    // empty; LoadAsync recognises any of these headers and removes the
+    // matching snapshot(s) from its result set. We carry the criteria as
+    // application-level headers instead of using a Kafka null-value
+    // compaction tombstone because Akka.Persistence's Delete semantics
+    // need to target a *specific* snapshot (by seqNr) or a *range* (by
+    // criteria), not "drop everything for this key".
+    public const string SnapshotTombstoneSeqNrHeader = "akka-snapshot-tombstone-seq-nr";
+    public const string SnapshotTombstoneMaxSeqNrHeader = "akka-snapshot-tombstone-max-seq-nr";
+    public const string SnapshotTombstoneMinSeqNrHeader = "akka-snapshot-tombstone-min-seq-nr";
+    public const string SnapshotTombstoneMaxTimestampHeader = "akka-snapshot-tombstone-max-timestamp";
+    public const string SnapshotTombstoneMinTimestampHeader = "akka-snapshot-tombstone-min-timestamp";
+
     public static byte[] EncodeLong(long value)
     {
         var bytes = new byte[8];

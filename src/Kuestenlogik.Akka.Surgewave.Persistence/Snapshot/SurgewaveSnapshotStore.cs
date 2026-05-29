@@ -94,19 +94,60 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
         var snapshotTopic = _settings.ResolveTopicName(_settings.SnapshotTopic);
         await _consumer!.SubscribeAsync(cancellationToken, snapshotTopic);
 
-        SelectedSnapshot? result = null;
+        // Collect all live snapshots for this persistenceId in a dictionary
+        // keyed by seqNr; tombstone records (specific seqNr OR criteria
+        // range) remove matching entries. After the scan, return the
+        // highest-seqNr live snapshot that also satisfies the load criteria.
+        // Keyed-by-seqNr is the natural Akka.Persistence identity for a
+        // snapshot — Save+Delete pair up by seqNr.
+        var live = new Dictionary<long, (DateTime Timestamp, object Snapshot)>();
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var record = await _consumer.ConsumeAsync(TimeSpan.FromSeconds(5), cancellationToken);
+            // Short per-call timeout so the end-of-topic detection (null) is
+            // cheap: long-polling 5s per partition × 4 partitions would
+            // exceed Akka's 10s ExpectMsg budget on its own.
+            var record = await _consumer.ConsumeAsync(TimeSpan.FromMilliseconds(500), cancellationToken);
             if (record is null)
                 break;
 
             if (record.Key != persistenceId)
                 continue;
-            if (record.Value is null or { Length: 0 })
-                continue;
             if (record.Headers is null)
+                continue;
+
+            // Tombstone: specific seqNr — DeleteAsync(metadata) path.
+            if (record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneSeqNrHeader, out var delSeqBytes))
+            {
+                live.Remove(EventEnvelopeCodec.DecodeLong(delSeqBytes));
+                continue;
+            }
+
+            // Tombstone: criteria range — DeleteAsync(criteria) path.
+            if (record.Headers.ContainsKey(EventEnvelopeCodec.SnapshotTombstoneMaxSeqNrHeader)
+                || record.Headers.ContainsKey(EventEnvelopeCodec.SnapshotTombstoneMinSeqNrHeader)
+                || record.Headers.ContainsKey(EventEnvelopeCodec.SnapshotTombstoneMaxTimestampHeader)
+                || record.Headers.ContainsKey(EventEnvelopeCodec.SnapshotTombstoneMinTimestampHeader))
+            {
+                var tMaxSeq = record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneMaxSeqNrHeader, out var msb)
+                    ? EventEnvelopeCodec.DecodeLong(msb) : long.MaxValue;
+                var tMinSeq = record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneMinSeqNrHeader, out var mnb)
+                    ? EventEnvelopeCodec.DecodeLong(mnb) : 0L;
+                var tMaxTs = record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneMaxTimestampHeader, out var mtb)
+                    ? new DateTime(EventEnvelopeCodec.DecodeLong(mtb), DateTimeKind.Utc) : DateTime.MaxValue;
+                var tMinTs = record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneMinTimestampHeader, out var ntb)
+                    ? new DateTime(EventEnvelopeCodec.DecodeLong(ntb), DateTimeKind.Utc) : DateTime.MinValue;
+                var doomed = live.Where(kv =>
+                        kv.Key >= tMinSeq && kv.Key <= tMaxSeq
+                        && kv.Value.Timestamp >= tMinTs && kv.Value.Timestamp <= tMaxTs)
+                    .Select(kv => kv.Key)
+                    .ToList();
+                foreach (var k in doomed) live.Remove(k);
+                continue;
+            }
+
+            // Regular snapshot record — needs a non-empty body and the seqNr header.
+            if (record.Value is null or { Length: 0 })
                 continue;
             if (!record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotSeqNrHeader, out var seqNrBytes))
                 continue;
@@ -116,17 +157,21 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
                 ? new DateTime(EventEnvelopeCodec.DecodeLong(tsBytes), DateTimeKind.Utc)
                 : DateTime.UtcNow;
 
-            if (seqNr > criteria.MaxSequenceNr || seqNr < criteria.MinSequenceNr)
-                continue;
-            if (timestamp > criteria.MaxTimeStamp || timestamp < criteria.MinTimestamp)
-                continue;
-
             var snapshot = _serializer!.DeserializeSnapshot(record.Value, record.Headers);
-            result = new SelectedSnapshot(
-                new SnapshotMetadata(persistenceId, seqNr, timestamp), snapshot);
+            live[seqNr] = (timestamp, snapshot);
         }
 
-        return result;
+        // Apply the load criteria to the live set and return the highest seqNr.
+        var matching = live
+            .Where(kv =>
+                kv.Key <= criteria.MaxSequenceNr && kv.Key >= criteria.MinSequenceNr
+                && kv.Value.Timestamp <= criteria.MaxTimeStamp && kv.Value.Timestamp >= (criteria.MinTimestamp ?? DateTime.MinValue))
+            .OrderByDescending(kv => kv.Key)
+            .ToList();
+        if (matching.Count == 0) return null;
+        var best = matching[0];
+        return new SelectedSnapshot(
+            new SnapshotMetadata(persistenceId, best.Key, best.Value.Timestamp), best.Value.Snapshot);
     }
 
     protected override async Task SaveAsync(
@@ -149,7 +194,16 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
     {
         await EnsureInitializedAsync();
         var snapshotTopic = _settings.ResolveTopicName(_settings.SnapshotTopic);
-        await _producer!.ProduceAsync(snapshotTopic, metadata.PersistenceId, null!);
+        // Tombstone for one specific seqNr — empty body + marker header.
+        // The producer rejects null values; a Kafka-style null compaction
+        // tombstone would also drop every prior seqNr for the same key,
+        // which is wrong for Akka's per-snapshot Delete semantics.
+        var headers = new Dictionary<string, byte[]>
+        {
+            [EventEnvelopeCodec.SnapshotTombstoneSeqNrHeader] = EventEnvelopeCodec.EncodeLong(metadata.SequenceNr),
+        };
+        await _producer!.ProduceAsync(
+            snapshotTopic, metadata.PersistenceId, Array.Empty<byte>(), headers);
     }
 
     protected override async Task DeleteAsync(
@@ -158,7 +212,17 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
     {
         await EnsureInitializedAsync();
         var snapshotTopic = _settings.ResolveTopicName(_settings.SnapshotTopic);
-        await _producer!.ProduceAsync(snapshotTopic, persistenceId, null!);
+        // Range-tombstone: carry the four criteria bounds as headers so
+        // LoadAsync can drop every live snapshot that matches.
+        var headers = new Dictionary<string, byte[]>
+        {
+            [EventEnvelopeCodec.SnapshotTombstoneMaxSeqNrHeader] = EventEnvelopeCodec.EncodeLong(criteria.MaxSequenceNr),
+            [EventEnvelopeCodec.SnapshotTombstoneMinSeqNrHeader] = EventEnvelopeCodec.EncodeLong(criteria.MinSequenceNr),
+            [EventEnvelopeCodec.SnapshotTombstoneMaxTimestampHeader] = EventEnvelopeCodec.EncodeLong(criteria.MaxTimeStamp.Ticks),
+            [EventEnvelopeCodec.SnapshotTombstoneMinTimestampHeader] = EventEnvelopeCodec.EncodeLong((criteria.MinTimestamp ?? DateTime.MinValue).Ticks),
+        };
+        await _producer!.ProduceAsync(
+            snapshotTopic, persistenceId, Array.Empty<byte>(), headers);
     }
 
     protected override void PostStop()
