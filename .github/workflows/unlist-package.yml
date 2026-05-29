@@ -1,0 +1,31 @@
+name: Unlist NuGet package version
+
+# One-off / maintenance helper: unlist a specific package version from
+# nuget.org. `dotnet nuget delete` on nuget.org performs an UNLIST (soft —
+# existing direct-version consumers keep working, the version just stops
+# showing up in search / latest), not a hard delete. Runs with the org
+# NUGET_API_KEY secret so the key is never exposed locally.
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package id to unlist
+        required: true
+      version:
+        description: Version to unlist
+        required: true
+
+jobs:
+  unlist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Unlist
+        run: >
+          dotnet nuget delete
+          "${{ inputs.package }}" "${{ inputs.version }}"
+          --non-interactive
+          --api-key "${{ secrets.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
