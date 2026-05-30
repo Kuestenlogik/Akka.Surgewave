@@ -28,6 +28,10 @@ public static class EventEnvelopeCodec
     // need to target a *specific* snapshot (by seqNr) or a *range* (by
     // criteria), not "drop everything for this key".
     public const string SnapshotTombstoneSeqNrHeader = "akka-snapshot-tombstone-seq-nr";
+    // 0 ticks (DateTime.MinValue) means "ignore the stored timestamp" — the
+    // tombstone matches every snapshot at that seqNr regardless of when it
+    // was saved. Any other value must match the stored timestamp exactly.
+    public const string SnapshotTombstoneTimestampHeader = "akka-snapshot-tombstone-timestamp";
     public const string SnapshotTombstoneMaxSeqNrHeader = "akka-snapshot-tombstone-max-seq-nr";
     public const string SnapshotTombstoneMinSeqNrHeader = "akka-snapshot-tombstone-min-seq-nr";
     public const string SnapshotTombstoneMaxTimestampHeader = "akka-snapshot-tombstone-max-timestamp";

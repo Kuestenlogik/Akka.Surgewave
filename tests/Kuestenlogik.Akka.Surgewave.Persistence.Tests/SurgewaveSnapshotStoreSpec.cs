@@ -2,6 +2,7 @@ namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 
 using global::Akka.Persistence.TCK.Snapshot;
 using Xunit;
+using Xunit.Abstractions;
 
 /// <summary>
 /// Runs the full Akka.NET SnapshotStore TCK against a real Surgewave broker,
@@ -10,8 +11,8 @@ using Xunit;
 [Collection(SurgewaveBrokerCollection.Name)]
 public class SurgewaveSnapshotStoreSpec : SnapshotStoreSpec
 {
-    public SurgewaveSnapshotStoreSpec(SurgewaveBrokerFixture broker)
-        : base(SurgewaveSnapshotSpecConfig.Create(broker.BootstrapServers), nameof(SurgewaveSnapshotStoreSpec))
+    public SurgewaveSnapshotStoreSpec(SurgewaveBrokerFixture broker, ITestOutputHelper output)
+        : base(SurgewaveSnapshotSpecConfig.Create(broker.BootstrapServers), nameof(SurgewaveSnapshotStoreSpec), output)
     {
         Initialize();
     }
