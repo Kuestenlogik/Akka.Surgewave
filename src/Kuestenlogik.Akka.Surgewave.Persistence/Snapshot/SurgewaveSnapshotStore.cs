@@ -92,7 +92,20 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
     {
         await EnsureInitializedAsync();
         var snapshotTopic = _settings.ResolveTopicName(_settings.SnapshotTopic);
-        await _consumer!.SubscribeAsync(cancellationToken, snapshotTopic);
+
+        // Fresh consumer per LoadAsync — the snapshot topic is a compacted
+        // event log we have to replay from the beginning every time. A
+        // long-lived shared consumer would carry forward an offset, so
+        // subsequent calls would see only deltas. Cheap to spin up because
+        // the snapshot topic is small (one record per save + tombstone).
+        await using var loadConsumer = new SurgewaveConsumer<string, byte[]>(opts =>
+        {
+            opts.BootstrapServers = _settings.BootstrapServers;
+            opts.GroupId = $"akka-snapshot-reader-{Guid.NewGuid():N}";
+            opts.AutoOffsetReset = AutoOffsetReset.Earliest;
+            opts.EnableAutoCommit = false;
+        });
+        await loadConsumer.SubscribeAsync(cancellationToken, snapshotTopic);
 
         // Collect all live snapshots for this persistenceId in a dictionary
         // keyed by seqNr; tombstone records (specific seqNr OR criteria
@@ -105,9 +118,11 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
         while (!cancellationToken.IsCancellationRequested)
         {
             // Short per-call timeout so the end-of-topic detection (null) is
-            // cheap: long-polling 5s per partition × 4 partitions would
-            // exceed Akka's 10s ExpectMsg budget on its own.
-            var record = await _consumer.ConsumeAsync(TimeSpan.FromMilliseconds(500), cancellationToken);
+            // cheap: long-polling 5s per partition would exceed Akka's 10s
+            // ExpectMsg budget on its own. 2s leaves enough slack for the
+            // first record after a fresh save while still falling well below
+            // the TCK deadline.
+            var record = await loadConsumer.ConsumeAsync(TimeSpan.FromSeconds(2), cancellationToken);
             if (record is null)
                 break;
 
@@ -116,10 +131,21 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
             if (record.Headers is null)
                 continue;
 
-            // Tombstone: specific seqNr — DeleteAsync(metadata) path.
+            // Tombstone: specific seqNr — DeleteAsync(metadata) path. When the
+            // tombstone carries a non-zero timestamp it must match the stored
+            // snapshot exactly; otherwise it is a no-op (the TCK uses this to
+            // express "don't delete if my metadata is stale").
             if (record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneSeqNrHeader, out var delSeqBytes))
             {
-                live.Remove(EventEnvelopeCodec.DecodeLong(delSeqBytes));
+                var delSeq = EventEnvelopeCodec.DecodeLong(delSeqBytes);
+                var delTsTicks = record.Headers.TryGetValue(EventEnvelopeCodec.SnapshotTombstoneTimestampHeader, out var delTsBytes)
+                    ? EventEnvelopeCodec.DecodeLong(delTsBytes)
+                    : 0L;
+                if (live.TryGetValue(delSeq, out var liveEntry))
+                {
+                    if (delTsTicks == 0L || liveEntry.Timestamp.Ticks == delTsTicks)
+                        live.Remove(delSeq);
+                }
                 continue;
             }
 
@@ -198,9 +224,16 @@ public sealed class SurgewaveSnapshotStore : SnapshotStore
         // The producer rejects null values; a Kafka-style null compaction
         // tombstone would also drop every prior seqNr for the same key,
         // which is wrong for Akka's per-snapshot Delete semantics.
+        //
+        // Akka allows the caller to scope the delete by both seqNr and
+        // timestamp. We always serialise the timestamp ticks alongside the
+        // seqNr; LoadAsync only honours the tombstone when the timestamp
+        // either matches the stored snapshot exactly or is zero
+        // (DateTime.MinValue = "any timestamp").
         var headers = new Dictionary<string, byte[]>
         {
             [EventEnvelopeCodec.SnapshotTombstoneSeqNrHeader] = EventEnvelopeCodec.EncodeLong(metadata.SequenceNr),
+            [EventEnvelopeCodec.SnapshotTombstoneTimestampHeader] = EventEnvelopeCodec.EncodeLong(metadata.Timestamp.Ticks),
         };
         await _producer!.ProduceAsync(
             snapshotTopic, metadata.PersistenceId, Array.Empty<byte>(), headers);
