@@ -45,7 +45,7 @@
     coordinated release.
   -->
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
-    <Version>0.3.2</Version>
+    <Version>0.3.3</Version>
     <!-- AssemblyVersion + FileVersion folgen $(Version); SemVer-Prerelease-
          Suffix (z.B. "-ci.X.sha") wird gestripped, weil AssemblyVersion
          strikt nur major.minor.build.revision akzeptiert. Surgewave-Repo
