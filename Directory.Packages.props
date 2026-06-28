@@ -13,7 +13,7 @@
     <!-- Surgewave (consumed from nuget.org / GitHub Packages) -->
     <PackageVersion Include="Kuestenlogik.Surgewave.Client" Version="0.2.0" />
     <PackageVersion Include="Kuestenlogik.Surgewave.Runtime" Version="0.1.13" />
-    <PackageVersion Include="Kuestenlogik.Surgewave.Client.SchemaRegistry" Version="0.1.13" />
+    <PackageVersion Include="Kuestenlogik.Surgewave.Client.SchemaRegistry" Version="0.2.0" />
     <PackageVersion Include="Kuestenlogik.Surgewave.Client.SchemaRegistry.Protobuf" Version="0.1.13" />
     <!-- Logging -->
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
