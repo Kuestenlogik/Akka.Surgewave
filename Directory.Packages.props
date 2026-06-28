@@ -6,7 +6,7 @@
     <!-- Akka.NET -->
     <PackageVersion Include="Akka" Version="1.5.44" />
     <PackageVersion Include="Akka.Streams" Version="1.5.44" />
-    <PackageVersion Include="Akka.Persistence" Version="1.5.44" />
+    <PackageVersion Include="Akka.Persistence" Version="1.5.69" />
     <PackageVersion Include="Akka.Persistence.Query" Version="1.5.44" />
     <PackageVersion Include="Akka.Persistence.TCK" Version="1.5.44" />
     <PackageVersion Include="Akka.Hosting" Version="1.5.44" />
