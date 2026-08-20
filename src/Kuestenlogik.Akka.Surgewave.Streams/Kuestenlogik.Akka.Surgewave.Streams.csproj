@@ -8,8 +8,7 @@
     <PackageReference Include="Akka.Streams" />
     <PackageReference Include="Akka.Hosting" />
     <PackageReference Include="Kuestenlogik.Surgewave.Client" />
-    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry" />
-    <PackageReference Include="Kuestenlogik.Surgewave.Client.SchemaRegistry.Protobuf" />
+    <PackageReference Include="Kuestenlogik.Surgewave.Schema.Registry.Client" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 

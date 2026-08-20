@@ -1,7 +1,7 @@
 namespace Kuestenlogik.Akka.Surgewave.Persistence.Hosting;
 
 using Kuestenlogik.Akka.Surgewave.Persistence.Serialization;
-using Kuestenlogik.Surgewave.Client.SchemaRegistry;
+using Kuestenlogik.Surgewave.Schema.Registry.Client;
 
 /// <summary>
 /// Typed configuration object for Surgewave Persistence, used by WithSurgewavePersistence().

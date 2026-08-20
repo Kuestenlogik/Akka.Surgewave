@@ -3,7 +3,7 @@ namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 using global::Akka.Configuration;
 using Kuestenlogik.Akka.Surgewave.Persistence.Journal;
 using Kuestenlogik.Akka.Surgewave.Persistence.Serialization;
-using Kuestenlogik.Surgewave.Client.SchemaRegistry;
+using Kuestenlogik.Surgewave.Schema.Registry.Client;
 using Xunit;
 
 public class SurgewaveJournalSettingsTests

@@ -16,7 +16,7 @@ public sealed class SurgewaveBrokerFixture : IAsyncLifetime
 
     public string BootstrapServers { get; private set; } = "localhost:9092";
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _runtime = await SurgewaveRuntime.CreateBuilder()
             .WithPort(0) // auto-assign — no fixed-port collision in CI/local
@@ -29,7 +29,7 @@ public sealed class SurgewaveBrokerFixture : IAsyncLifetime
         BootstrapServers = _runtime.BootstrapServers;
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_runtime is not null)
             await _runtime.DisposeAsync();
