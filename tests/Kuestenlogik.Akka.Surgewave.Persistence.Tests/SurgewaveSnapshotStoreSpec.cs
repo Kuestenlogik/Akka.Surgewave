@@ -2,7 +2,6 @@ namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 
 using global::Akka.Persistence.TCK.Snapshot;
 using Xunit;
-using Xunit.Abstractions;
 
 /// <summary>
 /// Runs the full Akka.NET SnapshotStore TCK against a real Surgewave broker,

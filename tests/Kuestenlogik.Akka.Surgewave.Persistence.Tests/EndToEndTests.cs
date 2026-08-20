@@ -12,7 +12,6 @@ using Kuestenlogik.Surgewave.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
-using Xunit.Abstractions;
 
 /// <summary>
 /// End-to-end integration tests using an embedded in-memory Surgewave broker.
@@ -28,7 +27,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         _output = output;
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _surgewave = await SurgewaveRuntime.CreateBuilder()
             .WithPort(0) // auto-assign port
@@ -41,7 +40,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         _output.WriteLine($"Surgewave broker started at {_surgewave.BootstrapServers}");
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_surgewave is not null)
             await _surgewave.DisposeAsync();
@@ -68,7 +67,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         });
 
         var app = builder.Build();
-        await app.StartAsync();
+        await app.StartAsync(TestContext.Current.CancellationToken);
 
         var system = app.Services.GetRequiredService<ActorSystem>();
 
@@ -80,7 +79,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         actor.Tell("hello-surgewave");
 
         // Wait for the event to be persisted
-        await Task.Delay(3000);
+        await Task.Delay(3000, TestContext.Current.CancellationToken);
 
         // Assert: read the event from the Surgewave topic using a plain consumer
         await using var consumer = new SurgewaveConsumer<string, byte[]>(opts =>
@@ -143,7 +142,7 @@ public sealed class EndToEndTests : IAsyncLifetime
 
         Assert.True(found, "Event from PersistentActor was not found on Surgewave topic");
 
-        await app.StopAsync();
+        await app.StopAsync(TestContext.Current.CancellationToken);
     }
 
     /// <summary>

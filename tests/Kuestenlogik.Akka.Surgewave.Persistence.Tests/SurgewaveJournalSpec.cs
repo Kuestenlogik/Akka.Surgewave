@@ -2,7 +2,6 @@ namespace Kuestenlogik.Akka.Surgewave.Persistence.Tests;
 
 using global::Akka.Persistence.TCK.Journal;
 using Xunit;
-using Xunit.Abstractions;
 
 /// <summary>
 /// Runs the full Akka.NET Journal TCK against a real Surgewave broker,

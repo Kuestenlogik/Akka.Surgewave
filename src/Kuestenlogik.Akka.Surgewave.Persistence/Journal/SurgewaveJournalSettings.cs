@@ -3,7 +3,7 @@ namespace Kuestenlogik.Akka.Surgewave.Persistence.Journal;
 using global::Akka.Configuration;
 using Kuestenlogik.Akka.Surgewave.Persistence.Serialization;
 using Kuestenlogik.Surgewave.Client.Native.Operations.Schema;
-using Kuestenlogik.Surgewave.Client.SchemaRegistry;
+using Kuestenlogik.Surgewave.Schema.Registry.Client;
 
 /// <summary>
 /// Settings for SurgewaveJournal, parsed from HOCON configuration.

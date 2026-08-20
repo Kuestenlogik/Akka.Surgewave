@@ -6,7 +6,6 @@ using Kuestenlogik.Surgewave.Client.Abstractions;
 using Kuestenlogik.Surgewave.Client.Consumer;
 using Kuestenlogik.Surgewave.Runtime;
 using Xunit;
-using Xunit.Abstractions;
 
 /// <summary>
 /// End-to-end integration tests using an embedded in-memory Surgewave broker.
@@ -22,7 +21,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         _output = output;
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _surgewave = await SurgewaveRuntime.CreateBuilder()
             .WithPort(0)
@@ -35,7 +34,7 @@ public sealed class EndToEndTests : IAsyncLifetime
         _output.WriteLine($"Surgewave broker started at {_surgewave.BootstrapServers}");
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_surgewave is not null)
             await _surgewave.DisposeAsync();
@@ -52,10 +51,10 @@ public sealed class EndToEndTests : IAsyncLifetime
             opts.BootstrapServers = _surgewave!.BootstrapServers;
         });
 
-        await producer.ProduceAsync(topic, "k1", "hello"u8.ToArray());
-        await producer.ProduceAsync(topic, "k2", "world"u8.ToArray());
-        await producer.ProduceAsync(topic, "k3", "surgewave"u8.ToArray());
-        await producer.FlushAsync(CancellationToken.None);
+        await producer.ProduceAsync(topic, "k1", "hello"u8.ToArray(), TestContext.Current.CancellationToken);
+        await producer.ProduceAsync(topic, "k2", "world"u8.ToArray(), TestContext.Current.CancellationToken);
+        await producer.ProduceAsync(topic, "k3", "surgewave"u8.ToArray(), TestContext.Current.CancellationToken);
+        await producer.FlushAsync(TestContext.Current.CancellationToken);
 
         _output.WriteLine("Produced 3 messages");
 
@@ -106,8 +105,8 @@ public sealed class EndToEndTests : IAsyncLifetime
             ["custom-header"] = "test-value"u8.ToArray()
         };
 
-        await producer.ProduceAsync(topic, "key1", "{\"msg\":\"test\"}"u8.ToArray(), headers);
-        await producer.FlushAsync(CancellationToken.None);
+        await producer.ProduceAsync(topic, "key1", "{\"msg\":\"test\"}"u8.ToArray(), headers, TestContext.Current.CancellationToken);
+        await producer.FlushAsync(TestContext.Current.CancellationToken);
 
         _output.WriteLine("Produced message with headers");
 
