@@ -46,7 +46,7 @@ jobs:
           # Filter via FullyQualifiedName so dass Release-Tags nicht blocken.
           # main-CI laesst die Specs in einem separaten Testcontainers-Job
           # laufen (folgt).
-          dotnet test Akka.Surgewave.slnx -c Release --no-build -v normal --filter "FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd"
+          dotnet test --solution Akka.Surgewave.slnx -c Release --no-build -v normal --filter "FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd"
 
       - name: Pack NuGet
         run: dotnet pack Akka.Surgewave.slnx -c Release --no-build -o artifacts/packages -p:Version=${{ steps.version.outputs.VERSION }}

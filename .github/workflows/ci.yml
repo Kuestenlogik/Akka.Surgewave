@@ -52,7 +52,7 @@ jobs:
         # Akka-TCK-Specs gegen einen echten Broker laufen. SnapshotStore-TCK
         # ist seit Tombstone-Header-Refactor + Surgewave-Client 0.1.6
         # (Consumer-Timeout-Passthrough) ohne Spec-Filter gruen.
-        run: dotnet test Akka.Surgewave.slnx -c Release --no-build -v normal
+        run: dotnet test --solution Akka.Surgewave.slnx -c Release --no-build -v normal
 
       - name: Pack NuGet
         run: dotnet pack Akka.Surgewave.slnx -c Release --no-build -o artifacts/packages -p:Version=$VERSION
