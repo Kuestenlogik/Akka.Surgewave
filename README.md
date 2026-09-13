@@ -2,6 +2,8 @@
 
 Akka.NET integration packages for [Surgewave](https://github.com/Kuestenlogik/Surgewave) — Akka.Streams sources/sinks/flows and an Akka.Persistence journal + snapshot store + read journal, both backed by Surgewave.
 
+[![Surgewave on StartupScores](https://startupscores.com/badge/surgewave.svg?style=shield&v=combo&theme=dark)](https://startupscores.com/open-source/surgewave)
+
 Two NuGet packages ship from this repository:
 
 | Package | What it does | Analogous to |
