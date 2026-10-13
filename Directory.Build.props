@@ -46,18 +46,18 @@
   -->
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
     <Version>0.3.4</Version>
-    <!-- AssemblyVersion + FileVersion folgen $(Version); SemVer-Prerelease-
-         Suffix (z.B. "-ci.X.sha") wird gestripped, weil AssemblyVersion
-         strikt nur major.minor.build.revision akzeptiert. Surgewave-Repo
-         nutzt das gleiche Muster (Directory.Build.props dort). -->
+    <!-- AssemblyVersion + FileVersion follow $(Version); the SemVer prerelease
+         suffix (e.g. "-ci.X.sha") is stripped, because AssemblyVersion
+         strictly accepts only major.minor.build.revision. The Surgewave repo
+         uses the same pattern (its Directory.Build.props). -->
     <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '-.*$', ''))</AssemblyVersion>
     <FileVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '-.*$', ''))</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <!--
-    icon.png + README.md aus dem Repo-Root in jedes NuGet einbetten.
-    Quelle des icon.png ist scripts/icon.svg + scripts/generate-icon.js
+    Embed icon.png + README.md from the repo root into every NuGet package.
+    The source of icon.png is scripts/icon.svg + scripts/generate-icon.js
     (sharp-based render).
   -->
   <ItemGroup Condition="'$(IsPackable)' != 'false'">

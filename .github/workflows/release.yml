@@ -17,9 +17,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
-    # Job-level env damit das Secret in step-level `if:`-Ausdruecken sichtbar
-    # ist (der `secrets`-Context ist dort nicht direkt verfuegbar). Empty
-    # string wenn nicht gesetzt → `env.X != ''`-Gates skippen sauber.
+    # Job-level env so that the secret is visible in step-level `if:`
+    # expressions (the `secrets` context is not directly available there).
+    # Empty string when not set → `env.X != ''` gates skip cleanly.
     env:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
@@ -42,10 +42,10 @@ jobs:
       - name: Build & Test
         run: |
           dotnet build Akka.Surgewave.slnx -c Release --no-restore -p:Version=${{ steps.version.outputs.VERSION }}
-          # Akka.Persistence-TCK + EndToEnd-Tests brauchen einen Surgewave-Broker.
-          # Filter via FullyQualifiedName so dass Release-Tags nicht blocken.
-          # main-CI laesst die Specs in einem separaten Testcontainers-Job
-          # laufen (folgt).
+          # The Akka.Persistence TCK + EndToEnd tests need a Surgewave broker.
+          # Filter via FullyQualifiedName so that release tags don't block.
+          # The main CI runs the specs in a separate Testcontainers job
+          # (to follow).
           dotnet test --solution Akka.Surgewave.slnx -c Release --no-build -v normal --filter "FullyQualifiedName!~Spec&FullyQualifiedName!~EndToEnd"
 
       - name: Pack NuGet
@@ -55,10 +55,10 @@ jobs:
         if: ${{ !contains(github.ref, '-rc') }}
         run: dotnet nuget push "artifacts/packages/*.nupkg" --source "https://nuget.pkg.github.com/Kuestenlogik/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
-      # nuget.org: nur GA-Tags (kein `-rc`), nur wenn Secret konfiguriert.
-      # Apache-2.0 → public-pushbar. NUGET_API_KEY braucht den 'Push new
-      # packages and package versions'-Scope mit Glob
-      # `Kuestenlogik.Akka.Surgewave.*` (deckt AkkaStreams + AkkaPersistence).
+      # nuget.org: only GA tags (no `-rc`), only when the secret is configured.
+      # Apache-2.0 → publicly pushable. NUGET_API_KEY needs the 'Push new
+      # packages and package versions' scope with glob
+      # `Kuestenlogik.Akka.Surgewave.*` (covers AkkaStreams + AkkaPersistence).
       - name: Publish NuGet to nuget.org
         if: ${{ !contains(github.ref, '-rc') && env.NUGET_API_KEY != '' }}
         run: |
