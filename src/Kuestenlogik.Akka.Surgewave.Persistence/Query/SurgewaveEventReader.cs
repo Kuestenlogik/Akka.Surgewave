@@ -84,7 +84,7 @@ internal sealed class SurgewaveEventReader
             _currentOffset = result.Offset;
 
             return Option<EventEnvelope>.Create(
-                new EventEnvelope(offset, _persistenceId, seqNr, persistent.Payload));
+                new EventEnvelope(offset, _persistenceId, seqNr, persistent.Payload, persistent.Timestamp, Array.Empty<string>()));
         }
     }
 

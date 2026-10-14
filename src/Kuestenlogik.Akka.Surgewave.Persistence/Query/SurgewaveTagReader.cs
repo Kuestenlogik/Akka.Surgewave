@@ -85,7 +85,7 @@ internal sealed class SurgewaveTagReader
             var offset = Offset.Sequence(result.Offset);
 
             return Option<EventEnvelope>.Create(
-                new EventEnvelope(offset, persistenceId, seqNr, persistent.Payload));
+                new EventEnvelope(offset, persistenceId, seqNr, persistent.Payload, persistent.Timestamp, Array.Empty<string>()));
         }
     }
 
