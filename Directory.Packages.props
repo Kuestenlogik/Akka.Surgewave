@@ -11,9 +11,9 @@
     <PackageVersion Include="Akka.Persistence.TCK" Version="1.5.73" />
     <PackageVersion Include="Akka.Hosting" Version="1.5.73" />
     <!-- Surgewave (consumed from nuget.org / GitHub Packages) -->
-    <PackageVersion Include="Kuestenlogik.Surgewave.Client" Version="0.5.1" />
+    <PackageVersion Include="Kuestenlogik.Surgewave.Client" Version="0.5.2" />
     <PackageVersion Include="Kuestenlogik.Surgewave.Runtime" Version="0.5.1" />
-    <PackageVersion Include="Kuestenlogik.Surgewave.Schema.Registry.Client" Version="0.5.1" />
+    <PackageVersion Include="Kuestenlogik.Surgewave.Schema.Registry.Client" Version="0.5.2" />
     <!-- Logging -->
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.13" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.13" />
